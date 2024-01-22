@@ -10,30 +10,31 @@ class Volunteer;
 
 // Warehouse responsible for Volunteers, Customers Actions, and Orders.
 
+class WareHouse
+{
 
-class WareHouse {
+public:
+    WareHouse(const string &configFilePath);
+    void start();
+    void addOrder(Order *order);
+    void addAction(BaseAction *action);
+    Customer &getCustomer(int customerId) const;
+    Volunteer &getVolunteer(int volunteerId) const;
+    Order &getOrder(int orderId) const;
+    const vector<BaseAction *> &getActions() const;
+    void close();
+    void open();
 
-    public:
-        WareHouse(const string &configFilePath);
-        void start();
-        void addOrder(Order* order);
-        void addAction(BaseAction* action);
-        Customer &getCustomer(int customerId) const;
-        Volunteer &getVolunteer(int volunteerId) const;
-        Order &getOrder(int orderId) const;
-        const vector<BaseAction*> &getActions() const;
-        void close();
-        void open();
-
-    private:
-        bool isOpen;
-        Parse parse;
-        vector<BaseAction*> actionsLog;
-        vector<Volunteer*> volunteers;
-        vector<Order*> pendingOrders;
-        vector<Order*> inProcessOrders;
-        vector<Order*> completedOrders;
-        vector<Customer*> customers;
-        int customerCounter; //For assigning unique customer IDs
-        int volunteerCounter; //For assigning unique volunteer IDs
+private:
+    bool isOpen;
+    Parse parse;
+    vector<BaseAction *> actionsLog;
+    vector<Volunteer *> volunteers;
+    vector<Order *> pendingOrders;
+    vector<Order *> inProcessOrders;
+    vector<Order *> completedOrders;
+    vector<Customer *> customers;
+    int customerCounter;  // For assigning unique customer IDs
+    int volunteerCounter; // For assigning unique volunteer IDs
+    int orderCounter;     // For assigning unique order IDs
 };
