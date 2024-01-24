@@ -17,6 +17,7 @@ public:
     WareHouse(const string &configFilePath);
     void start();
     void addOrder(Order *order);
+    void addCustomer(Customer *costumer);
     void addAction(BaseAction *action);
     Customer &getCustomer(int customerId) const;
     Volunteer &getVolunteer(int volunteerId) const;
@@ -24,6 +25,9 @@ public:
     const vector<BaseAction *> &getActions() const;
     void close();
     void open();
+    int assignCustomerId();
+    int assignVolunteerId();
+    int getCustomerCounter() const;
 
 private:
     bool isOpen;

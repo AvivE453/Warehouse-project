@@ -50,6 +50,7 @@ class CollectorVolunteer: public Volunteer {
         void acceptOrder(const Order &order) override;
         string toString() const override;
     
+    
     private:
         const int coolDown; // The time it takes the volunteer to process an order
         int timeLeft; // Time left until the volunteer finishes his current order

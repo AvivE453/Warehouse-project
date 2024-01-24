@@ -1,6 +1,6 @@
 #include "../include/Order.h"
 
-Order ::Order(int _id, int _customerId, int _distance) id(_id), customerId(_customerId), distance(_dist), status(PENDING), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER)
+Order::Order(int _id, int _customerId, int _distance):id(_id), customerId(_customerId), distance(_distance),status(OrderStatus::PENDING), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER)
 {
 }
 int Order ::getId() const
@@ -9,7 +9,7 @@ int Order ::getId() const
 }
 int Order ::getCustomerId() const
 {
-  return cusotmerId;
+  return customerId;
 }
 int Order ::getDistance() const
 {
