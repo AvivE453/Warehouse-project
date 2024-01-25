@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "WareHouse.h"
 using std::string;
 using std::vector;
 

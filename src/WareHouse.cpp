@@ -22,6 +22,13 @@ int WareHouse::assignCustomerId()
     return id;
 }
 
+int WareHouse::assignCustomerId()
+{
+    int id = orderCounter;
+    orderCounter++;
+    return id;
+}
+
 int WareHouse::assignVolunteerId()
 {
     int id = volunteerCounter;
@@ -32,6 +39,11 @@ int WareHouse::assignVolunteerId()
 int WareHouse::getCustomerCounter() const
 {
     return customerCounter;
+}
+
+int WareHouse::getOrderCounter() const
+{
+    return orderCounter;
 }
 
 void WareHouse::start()
@@ -56,14 +68,52 @@ void WareHouse::start()
         {
             vector<string> words = p.tokenize(cmd, " ");
             int customerid(stoi(words[1]));
-            addOrder();
+            action = new AddOrder(customerid);
+        }
+        else if (cmd.rfind("orderStatus", 0) == 0)
+        {
+            vector<string> words = p.tokenize(cmd, " ");
+            int orderId(stoi(words[1]));
+            action = new PrintOrderStatus(orderId);
+        }
+        else if (cmd.rfind("step ", 0) == 0)
+        {
+            vector<string> words = p.tokenize(cmd, " ");
+            int numOfStepsstoi(stoi(words[1]));
+            action = new SimulateStep(numOfStepsstoi);
         }
         action->act(*this);
     }
 }
-
-void addOrder(Order *order);
-void addAction(BaseAction *action);
+void WareHouse::addPendingOrderToList(Order *order)
+{
+    pendingOrders.push_back(order);
+}
+void WareHouse::addInProcessOrderToList(Order *order)
+{
+    inProcessOrders.push_back(order);
+}
+void WareHouse::addCompletedOrderToList(Order *order)
+{
+    completedOrders.push_back(order);
+}
+void WareHouse::addOrder(Order *order)
+{
+    getCustomer(order->getCustomerId()).addOrder(order->getId());
+    addPendingOrderToList(order);
+}
+void WareHouse::addAction(BaseAction *action)
+{
+    actionsLog.push_back(action);
+}
+const vector<Order *> &WareHouse::getPendingOrders() const
+{
+    return pendingOrders;
+}
+const vector<Volunteer *> &WareHouse::getVolunteersList() const
+{
+    return volunteers;
+}
 Customer &getCustomer(int customerId) const;
 Volunteer &getVolunteer(int volunteerId) const;
 Order &getOrder(int orderId) const;

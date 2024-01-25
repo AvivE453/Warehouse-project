@@ -6,6 +6,18 @@
         "iosfwd": "cpp",
         "initializer_list": "cpp",
         "ostream": "cpp",
-        "*.tcc": "cpp"
-    }
+        "*.tcc": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "string_view": "cpp"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/workspaces/Assignment1/bin",
+            "binaryPath": "/workspaces/Assignment1/bin/All",
+            "binaryArgs": []
+        }
+    ]
 }

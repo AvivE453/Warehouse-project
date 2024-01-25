@@ -3,11 +3,11 @@
 #include <vector>
 using std::string;
 using std::vector;
-#include "WareHouse.h"
+#include "./WareHouse.h"
 
-
-class Parse {
-    public:
-        void ParseFile(const string &configorationFile, WareHouse &wareHouse);
-        vector<string> tokenize(const string &s, const string &del);
+class Parse
+{
+public:
+    void ParseFile(const string &configorationFile, WareHouse &wareHouse);
+    vector<string> tokenize(const string &s, const string &del);
 };
