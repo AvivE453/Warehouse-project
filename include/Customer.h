@@ -4,7 +4,6 @@
 #include "WareHouse.h"
 using std::string;
 using std::vector;
-
 class Customer
 {
 public:

@@ -53,3 +53,7 @@ const string Order ::toString() const
     statusType = "Completed";
   return "OrderID:" + to_string(id) + ",CustomerID:" + to_string(customerId) + ",Status:" + statusType;
 }
+Order *Order::clone() const
+{
+  return new Order(*this);
+}

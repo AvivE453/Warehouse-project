@@ -4,7 +4,8 @@
 #include "../include/Order.h"
 #include "../include/Volunteer.h"
 using namespace std;
-extern WareHouse *backup = nullptr;
+extern WareHouse *backup;
+
 BaseAction::BaseAction()
 {
 }
@@ -328,12 +329,12 @@ void Close::act(WareHouse &wareHouse)
   {
     cout << orders[i]->toString() << endl;
   }
-  vector<Order *> orders = wareHouse.getCompletedOrders();
+  orders = wareHouse.getCompletedOrders();
   for (int i = 0; i < orders.size(); i++)
   {
     cout << orders[i]->toString() << endl;
   }
-  vector<Order *> orders = wareHouse.getInProcessOrders();
+  orders = wareHouse.getInProcessOrders();
   for (int i = 0; i < orders.size(); i++)
   {
     cout << orders[i]->toString() << endl;

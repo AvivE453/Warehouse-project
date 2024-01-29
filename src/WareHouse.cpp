@@ -2,6 +2,7 @@
 #include "../include/WareHouse.h"
 #include "../include/Customer.h"
 #include "../include/Action.h"
+#include "../include/Volunteer.h"
 #include <iostream>
 
 using namespace std;
@@ -22,7 +23,7 @@ int WareHouse::assignCustomerId()
     return id;
 }
 
-int WareHouse::assignCustomerId()
+int WareHouse::assignOrderId()
 {
     int id = orderCounter;
     orderCounter++;
@@ -51,7 +52,7 @@ int WareHouse::getVolunteerCounter() const
 }
 void WareHouse::start()
 {
-    BaseAction *action;
+    BaseAction *action = nullptr;
     open();
     while (isOpen)
     {
@@ -61,7 +62,7 @@ void WareHouse::start()
         if (cmd.rfind("customer ", 0) == 0)
         {
             vector<string> words = p.tokenize(cmd, " ");
-            action = new AddCustomer(words[1], words[2], stoi(words[3]), stoi(words[4]));
+            action = new AddCustomer(words.at(1), words.at(2), stoi(words.at(3)), stoi(words.at(4)));
         }
         else if (cmd.rfind("customerStatus", 0) == 0)
         {
@@ -134,10 +135,7 @@ void WareHouse::addAction(BaseAction *action)
 {
     actionsLog.push_back(action);
 }
-const vector<Order *> &WareHouse::getPendingOrders() const
-{
-    return pendingOrders;
-}
+
 const vector<Volunteer *> &WareHouse::getVolunteersList() const
 {
     return volunteers;
@@ -343,4 +341,16 @@ WareHouse::~WareHouse()
     {
         delete customers.at(i);
     }
+}
+const vector<Order *> &WareHouse::getPendingOrders() const
+{
+    return pendingOrders;
+}
+const vector<Order *> &WareHouse::getInProcessOrders() const
+{
+    return inProcessOrders;
+}
+const vector<Order *> &WareHouse::getCompletedOrders() const
+{
+    return completedOrders;
 }
