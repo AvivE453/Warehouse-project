@@ -4,7 +4,7 @@
 #include "../include/Order.h"
 #include "../include/Volunteer.h"
 using namespace std;
-
+extern WareHouse *backup = nullptr;
 BaseAction::BaseAction()
 {
 }
@@ -51,6 +51,7 @@ void AddCustomer::act(WareHouse &wareHouse)
     customer = new CivilianCustomer(wareHouse.assignCustomerId(), customerName, distance, maxOrders);
   }
   wareHouse.addCustomer(customer);
+  complete();
 }
 
 AddCustomer *AddCustomer::clone() const
@@ -59,6 +60,13 @@ AddCustomer *AddCustomer::clone() const
 }
 string AddCustomer::toString() const
 {
+  string type = "soldier";
+  if (customerType == CustomerType::Civilian)
+    type = "civilian";
+  string statusType = "ERROR";
+  if (getStatus() == ActionStatus::COMPLETED)
+    statusType = "COMPLETED";
+  return "customer " + customerName + " " + type + " " + to_string(distance) + " " + to_string(maxOrders) + statusType;
 }
 
 CustomerType AddCustomer::convertCustomerType(const string &customerType) const
@@ -81,10 +89,11 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
   {
     Customer *customer = &wareHouse.getCustomer(customerId);
     cout << customer->toString(wareHouse) << endl;
+    complete();
   }
   else
   {
-    cout << "customer doesn't exist " << endl;
+    error("customer doesn't exist");
   }
 }
 PrintCustomerStatus *PrintCustomerStatus::clone() const
@@ -93,6 +102,10 @@ PrintCustomerStatus *PrintCustomerStatus::clone() const
 }
 string PrintCustomerStatus::toString() const
 {
+  string statusType = "ERROR";
+  if (getStatus() == ActionStatus::COMPLETED)
+    statusType = "COMPLETED";
+  return "customerStatus " + to_string(customerId) + " " + statusType;
 }
 AddOrder::AddOrder(int id) : customerId(id)
 {
@@ -110,11 +123,18 @@ void AddOrder::act(WareHouse &wareHouse)
     Order *order = new Order(wareHouse.assignOrderId(), customerId,
                              customer->getCustomerDistance());
     wareHouse.addOrder(order);
+    complete();
   }
   else
-    cout << "Cannot place this order" << endl;
+    error("Cannot place this order");
 }
-string AddOrder::toString() const {};
+string AddOrder::toString() const
+{
+  string statusType = "ERROR";
+  if (getStatus() == ActionStatus::COMPLETED)
+    statusType = "COMPLETED";
+  return "order " + to_string(customerId) + " " + statusType;
+}
 AddOrder *AddOrder::clone() const
 {
   return new AddOrder(*this);
@@ -166,8 +186,15 @@ void SimulateStep::act(WareHouse &wareHouse)
       }
     }
   }
+  complete();
 }
-std::string SimulateStep::toString() const {}
+std::string SimulateStep::toString() const
+{
+  string statusType = "ERROR";
+  if (getStatus() == ActionStatus::COMPLETED)
+    statusType = "COMPLETED";
+  return "simulateStep " + to_string(numOfSteps) + " " + statusType;
+}
 SimulateStep *SimulateStep::clone() const {}
 
 PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {}
@@ -199,11 +226,161 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
     cout << "CollectorID: " << collectorId << endl;
     string driverId = order.getStatus() == OrderStatus::DELIVERING || order.getStatus() == OrderStatus::COMPLETED ? to_string(order.getDriverId()) : "None";
     cout << "DriverID: " << driverId << endl;
+    complete();
   }
   else
   {
-    cout << "Order doesn't exist" << endl;
+    error("Order doesn't exist");
   }
 }
 PrintOrderStatus *PrintOrderStatus::clone() const {};
-string PrintOrderStatus::toString() const {};
+string PrintOrderStatus::toString() const
+{
+  string statusType = "ERROR";
+  if (getStatus() == ActionStatus::COMPLETED)
+    statusType = "COMPLETED";
+  return "orderStatus " + to_string(orderId) + " " + statusType;
+}
+
+PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
+{
+}
+void PrintVolunteerStatus::act(WareHouse &wareHouse)
+{
+  if (volunteerId >= 0 && volunteerId < wareHouse.getVolunteerCounter())
+  {
+    Volunteer *volunteer(&wareHouse.getVolunteer(volunteerId));
+    cout << "VolunteerId: " << volunteerId << endl;
+    string isBusy = "False";
+    string orderID = "None";
+    if (volunteer->isBusy())
+    {
+      isBusy = "True";
+      orderID = to_string(volunteer->getActiveOrderId());
+    }
+    cout << "isBusy: " << isBusy << endl;
+
+    cout << "OrderID: " << orderID << endl;
+    string time = "None";
+    string ordersLimit = "No Limit";
+    if (typeid(volunteer) == typeid(CollectorVolunteer))
+    {
+      time = to_string(dynamic_cast<CollectorVolunteer *>(volunteer)->getTimeLeft());
+    }
+    else if (typeid(volunteer) == typeid(LimitedCollectorVolunteer))
+    {
+      time = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getTimeLeft());
+      ordersLimit = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getNumOrdersLeft());
+    }
+    else if (typeid(volunteer) == typeid(DriverVolunteer))
+    {
+      time = to_string(dynamic_cast<DriverVolunteer *>(volunteer)->getDistanceLeft());
+    }
+    else if (typeid(volunteer) == typeid(LimitedDriverVolunteer))
+    {
+      time = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getDistanceLeft());
+      ordersLimit = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getNumOrdersLeft());
+    }
+    cout << "TimeLeft: " << time << endl;
+    cout << "OrdersLeft: " << ordersLimit << endl;
+    complete();
+  }
+  else
+  {
+    error("Volunteer doesn't exist");
+  }
+}
+PrintVolunteerStatus *PrintVolunteerStatus::clone() const
+{
+}
+string PrintVolunteerStatus::toString() const
+{
+  string statusType = "ERROR";
+  if (getStatus() == ActionStatus::COMPLETED)
+    statusType = "COMPLETED";
+  return "volunteerStatus " + to_string(volunteerId) + " " + statusType;
+}
+PrintActionsLog::PrintActionsLog()
+{
+}
+void PrintActionsLog::act(WareHouse &wareHouse)
+{
+  vector<BaseAction *> actionsLog = wareHouse.getActionsLog();
+  for (int i = 0; i < actionsLog.size(); i++)
+  {
+    cout << actionsLog[i]->toString() << endl;
+  }
+}
+PrintActionsLog *PrintActionsLog::clone() const
+{
+}
+string PrintActionsLog::toString() const
+{
+  return "log COMPLETED ";
+}
+Close::Close()
+{
+}
+void Close::act(WareHouse &wareHouse)
+{
+  vector<Order *> orders = wareHouse.getPendingOrders();
+  for (int i = 0; i < orders.size(); i++)
+  {
+    cout << orders[i]->toString() << endl;
+  }
+  vector<Order *> orders = wareHouse.getCompletedOrders();
+  for (int i = 0; i < orders.size(); i++)
+  {
+    cout << orders[i]->toString() << endl;
+  }
+  vector<Order *> orders = wareHouse.getInProcessOrders();
+  for (int i = 0; i < orders.size(); i++)
+  {
+    cout << orders[i]->toString() << endl;
+  }
+}
+Close *Close::clone() const
+{
+}
+string Close::toString() const {
+
+};
+BackupWareHouse::BackupWareHouse()
+{
+}
+void BackupWareHouse::act(WareHouse &wareHouse)
+{
+  backup = wareHouse.clone();
+}
+BackupWareHouse *BackupWareHouse::clone() const
+{
+}
+string BackupWareHouse::toString() const
+{
+  return "Backup COMPLETED ";
+}
+RestoreWareHouse::RestoreWareHouse()
+{
+}
+void RestoreWareHouse::act(WareHouse &wareHouse)
+{
+  if (backup != nullptr)
+  {
+    wareHouse = *backup;
+    complete();
+  }
+  else
+  {
+    error("No backup available");
+  }
+}
+RestoreWareHouse *RestoreWareHouse::clone() const
+{
+}
+string RestoreWareHouse::toString() const
+{
+  string statusType = "ERROR";
+  if (getStatus() == ActionStatus::COMPLETED)
+    statusType = "COMPLETED";
+  return "Restore " + statusType;
+}

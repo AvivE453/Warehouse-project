@@ -33,9 +33,10 @@ CollectorVolunteer::CollectorVolunteer(int _id, const string &_name, int _coolDo
 {
 }
 
-CollectorVolunteer *CollectorVolunteer::clone() const {
-
-};
+CollectorVolunteer *CollectorVolunteer::clone() const
+{
+    return new CollectorVolunteer(*this);
+}
 void CollectorVolunteer::step()
 {
     decreaseCoolDown();
@@ -78,9 +79,14 @@ string CollectorVolunteer::toString() const {
 LimitedCollectorVolunteer::LimitedCollectorVolunteer(int _id, const string &_name, int _coolDown, int _maxOrders) : maxOrders(_maxOrders), CollectorVolunteer(_id, _name, _coolDown)
 {
 }
-LimitedCollectorVolunteer *LimitedCollectorVolunteer::clone() const {
-
-};
+LimitedCollectorVolunteer *LimitedCollectorVolunteer::clone() const
+{
+    return new LimitedCollectorVolunteer(*this);
+}
+void LimitedCollectorVolunteer::step()
+{
+    CollectorVolunteer::step();
+}
 bool LimitedCollectorVolunteer::hasOrdersLeft() const
 {
     return ordersLeft > 0;
@@ -110,8 +116,9 @@ string LimitedCollectorVolunteer::toString() const {
 DriverVolunteer ::DriverVolunteer(int _id, const string &_name, int _maxDistance, int _distancePerStep) : maxDistance(_maxDistance), distancePerStep(_distancePerStep), Volunteer(_id, _name)
 {
 }
-DriverVolunteer *DriverVolunteer::clone() const {
-
+DriverVolunteer *DriverVolunteer::clone() const
+{
+    return new DriverVolunteer(*this);
 };
 
 int DriverVolunteer ::getDistanceLeft() const
@@ -163,6 +170,12 @@ string DriverVolunteer ::toString() const
 LimitedDriverVolunteer::LimitedDriverVolunteer(int _id, const string &_name, int _maxDistance, int _distancePerStep, int _maxOrders) : DriverVolunteer(_id, _name, _maxDistance, _distancePerStep), maxOrders(_maxOrders) {}
 LimitedDriverVolunteer *LimitedDriverVolunteer::clone() const
 {
+    return new LimitedDriverVolunteer(*this);
+}
+
+void LimitedDriverVolunteer::step()
+{
+    DriverVolunteer::step();
 }
 int LimitedDriverVolunteer::getMaxOrders() const
 {
@@ -185,6 +198,6 @@ void LimitedDriverVolunteer::acceptOrder(const Order &order) // Assign distanceL
     DriverVolunteer::acceptOrder(order);
     ordersLeft--;
 }
-string LimitedDriverVolunteer::toString() const {
-
-};
+string LimitedDriverVolunteer::toString() const
+{
+}

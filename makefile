@@ -2,7 +2,7 @@
 all: clean compile link
 
 link:
-	g++ -o bin/All bin/main.o bin/WareHouse.o bin/Parse.o bin/Volunteer.o bin/Customer.o bin bin Order.o
+	g++ -o bin/All bin/main.o bin/WareHouse.o bin/Parse.o bin/Volunteer.o bin/Customer.o  bin/Order.o
 
 compile:
 	g++ -g -Wall -Weffc++ -c -o bin/main.o src/main.cpp

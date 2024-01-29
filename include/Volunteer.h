@@ -65,7 +65,7 @@ public:
     bool hasOrdersLeft() const override;
     bool canTakeOrder(const Order &order) const override;
     void acceptOrder(const Order &order) override;
-
+    void step() override;
     int getMaxOrders() const;
     int getNumOrdersLeft() const;
     string toString() const override;
@@ -105,6 +105,7 @@ class LimitedDriverVolunteer : public DriverVolunteer
 public:
     LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep, int maxOrders);
     LimitedDriverVolunteer *clone() const override;
+    void step() override;
     int getMaxOrders() const;
     int getNumOrdersLeft() const;
     bool hasOrdersLeft() const override;

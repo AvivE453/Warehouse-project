@@ -1,6 +1,9 @@
 #include "../include/Order.h"
+#include <iostream>
 
-Order::Order(int _id, int _customerId, int _distance):id(_id), customerId(_customerId), distance(_distance),status(OrderStatus::PENDING), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER)
+using namespace std;
+
+Order::Order(int id, int customerId, int distance) : id(id), customerId(customerId), distance(distance), status(OrderStatus::PENDING), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER)
 {
 }
 int Order ::getId() const
@@ -39,6 +42,14 @@ OrderStatus Order ::getStatus() const
 {
   return status;
 };
-const string Order ::toString() const {
-
-};
+const string Order ::toString() const
+{
+  string statusType = "Pending";
+  if (status == OrderStatus::COLLECTING)
+    statusType = "Collecting";
+  else if (status == OrderStatus::DELIVERING)
+    statusType = "Delivering";
+  else if (status == OrderStatus::COMPLETED)
+    statusType = "Completed";
+  return "OrderID:" + to_string(id) + ",CustomerID:" + to_string(customerId) + ",Status:" + statusType;
+}

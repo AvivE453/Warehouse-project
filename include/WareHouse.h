@@ -16,6 +16,9 @@ class WareHouse
 
 public:
     WareHouse(const string &configFilePath);
+    WareHouse(const WareHouse &other);
+    WareHouse *clone() const;
+    void operator=(const WareHouse &other);
     void start();
     void addOrder(Order *order);
     void addCustomer(Customer *costumer);
@@ -31,17 +34,19 @@ public:
     int assignOrderId();
     int getCustomerCounter() const;
     int getOrderCounter() const;
+    int getVolunteerCounter() const;
     void addPendingOrderToList(Order *order);
     void addInProcessOrderToList(Order *order);
     void addCompletedOrderToList(Order *order);
     void removePendingOrderFromList(Order *order);
     void removeInProcessOrderFromList(Order *order);
-    void removeCompletedOrderFromList(Order *order);
     const vector<Order *> &getPendingOrders() const;
     const vector<Order *> &getInProcessOrders() const;
     const vector<Order *> &getCompletedOrders() const;
     const vector<Volunteer *> &getVolunteersList() const;
+    const vector<BaseAction *> &getActionsLog() const;
     void removeVolunteerFromList(Volunteer *vulenteer);
+    ~WareHouse();
 
 private:
     bool isOpen;

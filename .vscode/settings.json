@@ -11,7 +11,20 @@
         "deque": "cpp",
         "string": "cpp",
         "unordered_map": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "new": "cpp",
+        "random": "cpp",
+        "atomic": "cpp",
+        "iterator": "cpp",
+        "memory_resource": "cpp",
+        "optional": "cpp",
+        "functional": "cpp",
+        "istream": "cpp",
+        "sstream": "cpp",
+        "stdexcept": "cpp",
+        "streambuf": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp"
     },
     "makefile.launchConfigurations": [
         {
