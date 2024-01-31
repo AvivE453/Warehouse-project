@@ -7,7 +7,7 @@
 
 using namespace std;
 
-WareHouse::WareHouse(const string &configFilePath) : isOpen(true), customerCounter(0), volunteerCounter(0)
+WareHouse::WareHouse(const string &configFilePath) : isOpen(true), customerCounter(0), volunteerCounter(0), orderCounter(0)
 {
     parse.ParseFile(configFilePath, *this);
 }
@@ -57,7 +57,7 @@ void WareHouse::start()
     while (isOpen)
     {
         string cmd;
-        cin >> cmd;
+        getline(cin, cmd);
         Parse p;
         if (cmd.rfind("customer ", 0) == 0)
         {
@@ -110,6 +110,10 @@ void WareHouse::start()
         {
             action = new RestoreWareHouse();
         }
+        else
+        {
+            continue;
+        }
         action->act(*this);
         addAction(action);
     }
@@ -134,6 +138,10 @@ void WareHouse::addOrder(Order *order)
 void WareHouse::addAction(BaseAction *action)
 {
     actionsLog.push_back(action);
+}
+void WareHouse::addVolunteer(Volunteer *volunteer)
+{
+    volunteers.push_back(volunteer);
 }
 
 const vector<Volunteer *> &WareHouse::getVolunteersList() const
@@ -173,6 +181,37 @@ WareHouse::WareHouse(const WareHouse &other) : isOpen(other.isOpen), parse(other
         customers.push_back(other.customers.at(i)->clone());
     }
 }
+
+WareHouse::WareHouse(const WareHouse &&other) : isOpen(other.isOpen), parse(other.parse),
+                                                customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter),
+                                                orderCounter(other.orderCounter)
+{
+    for (int i = 0; i < other.actionsLog.size(); i++)
+    {
+        actionsLog.push_back(other.actionsLog.at(i)->clone());
+    }
+    for (int i = 0; i < other.volunteers.size(); i++)
+    {
+        volunteers.push_back(other.volunteers.at(i)->clone());
+    }
+    for (int i = 0; i < other.pendingOrders.size(); i++)
+    {
+        pendingOrders.push_back(other.pendingOrders.at(i)->clone());
+    }
+    for (int i = 0; i < other.inProcessOrders.size(); i++)
+    {
+        inProcessOrders.push_back(other.inProcessOrders.at(i)->clone());
+    }
+    for (int i = 0; i < other.completedOrders.size(); i++)
+    {
+        completedOrders.push_back(other.completedOrders.at(i)->clone());
+    }
+    for (int i = 0; i < other.customers.size(); i++)
+    {
+        customers.push_back(other.customers.at(i)->clone());
+    }
+}
+
 WareHouse *WareHouse::clone() const
 {
     return new WareHouse(*this);

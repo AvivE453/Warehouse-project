@@ -67,7 +67,7 @@ string AddCustomer::toString() const
   string statusType = "ERROR";
   if (getStatus() == ActionStatus::COMPLETED)
     statusType = "COMPLETED";
-  return "customer " + customerName + " " + type + " " + to_string(distance) + " " + to_string(maxOrders) + statusType;
+  return "customer " + customerName + " " + type + " " + to_string(distance) + " " + to_string(maxOrders) + " " + statusType;
 }
 
 CustomerType AddCustomer::convertCustomerType(const string &customerType) const
@@ -89,7 +89,27 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
   if (customerId < wareHouse.getCustomerCounter())
   {
     Customer *customer = &wareHouse.getCustomer(customerId);
-    cout << customer->toString(wareHouse) << endl;
+    cout << "CustomerID: " << to_string(customer->getId()) << endl;
+    for (int id : customer->getOrdersIds())
+    {
+      OrderStatus stautus(wareHouse.getOrder(id).getStatus());
+      string status2 = "COMPLETED";
+      cout << "OrderID: " << to_string(id) << endl;
+      switch (stautus)
+      {
+      case OrderStatus::PENDING:
+        status2 = "PENDING";
+        break;
+      case OrderStatus::COLLECTING:
+        status2 = "COLLECTING";
+        break;
+      case OrderStatus::DELIVERING:
+        status2 = "DELIVERING";
+        break;
+      }
+      cout << "OrderStatus: " << status2 << endl;
+    }
+    cout << "numOrdersLeft: " << to_string(customer->getMaxOrders() - customer->getOrdersIds().size()) << endl;
     complete();
   }
   else
@@ -117,7 +137,6 @@ AddOrder::AddOrder(const AddOrder &other) : customerId(other.customerId)
 
 void AddOrder::act(WareHouse &wareHouse)
 {
-  wareHouse.addAction(this);
   Customer *customer = &wareHouse.getCustomer(customerId);
   if (customerId < wareHouse.getCustomerCounter() && customer->canMakeOrder())
   {
@@ -142,9 +161,10 @@ AddOrder *AddOrder::clone() const
 }
 
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps) {}
+
 void SimulateStep::act(WareHouse &wareHouse)
 {
-  for (int step = 1; step < numOfSteps; step++)
+  for (int step = 1; step <= numOfSteps; step++)
   {
     vector<Volunteer *> voulnteers = wareHouse.getVolunteersList();
     for (Order *order : wareHouse.getPendingOrders())
@@ -156,16 +176,30 @@ void SimulateStep::act(WareHouse &wareHouse)
         {
           voulnteers[i]->acceptOrder(*order);
           if (order->getStatus() == OrderStatus::PENDING)
-            order->setStatus(OrderStatus::COLLECTING);
+          {
+            order->setStatus(OrderStatus::COLLECTING); // the status is changed only when new voulnteer accept the order
+            order->setCollectorId(voulnteers[i]->getId());
+          }
+          else
+          {
+            order->setStatus(OrderStatus::DELIVERING);
+            order->setDriverId(voulnteers[i]->getId());
+          }
+          wareHouse.addInProcessOrderToList(order);
+          wareHouse.removePendingOrderFromList(order);
+          break;
         }
-
-        wareHouse.removePendingOrderFromList(order);
       }
-      for (int i = 0; i < voulnteers.size(); i++)
+    }
+
+    for (int i = 0; i < voulnteers.size(); i++)
+    {
+      if (voulnteers[i]->isBusy())
       {
         voulnteers[i]->step();
         if (voulnteers[i]->hasFininshed())
         {
+          Order *order = &wareHouse.getOrder(voulnteers[i]->getActiveOrderId());
           if (order->getStatus() == OrderStatus::DELIVERING)
           {
             wareHouse.addCompletedOrderToList(order);
@@ -175,6 +209,7 @@ void SimulateStep::act(WareHouse &wareHouse)
           {
             wareHouse.addPendingOrderToList(order);
           }
+          voulnteers[i]->setActiveOrderId(NO_ORDER);
           wareHouse.removeInProcessOrderFromList(order);
           if (typeid(voulnteers[i]) == typeid(LimitedCollectorVolunteer) || typeid(voulnteers[i]) == typeid(LimitedDriverVolunteer))
           {
@@ -264,20 +299,21 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
     cout << "OrderID: " << orderID << endl;
     string time = "None";
     string ordersLimit = "No Limit";
-    if (typeid(volunteer) == typeid(CollectorVolunteer))
+    if (typeid(*volunteer) == typeid(CollectorVolunteer))
     {
       time = to_string(dynamic_cast<CollectorVolunteer *>(volunteer)->getTimeLeft());
     }
-    else if (typeid(volunteer) == typeid(LimitedCollectorVolunteer))
+
+    else if (typeid(*volunteer) == typeid(LimitedCollectorVolunteer))
     {
       time = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getTimeLeft());
       ordersLimit = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getNumOrdersLeft());
     }
-    else if (typeid(volunteer) == typeid(DriverVolunteer))
+    else if (typeid(*volunteer) == typeid(DriverVolunteer))
     {
       time = to_string(dynamic_cast<DriverVolunteer *>(volunteer)->getDistanceLeft());
     }
-    else if (typeid(volunteer) == typeid(LimitedDriverVolunteer))
+    else if (typeid(*volunteer) == typeid(LimitedDriverVolunteer))
     {
       time = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getDistanceLeft());
       ordersLimit = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getNumOrdersLeft());

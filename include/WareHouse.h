@@ -22,6 +22,7 @@ public:
     void addOrder(Order *order);
     void addCustomer(Customer *costumer);
     void addAction(BaseAction *action);
+    void addVolunteer(Volunteer *volunteer);
     Customer &getCustomer(int customerId) const;
     Volunteer &getVolunteer(int volunteerId) const;
     Order &getOrder(int orderId) const;

@@ -16,8 +16,7 @@ public:
     int getNumOrders() const;  // Returns num of orders the customer has made so far
     bool canMakeOrder() const; // Returns true if the customer didn't reach max orders
     const vector<int> &getOrdersIds() const;
-    int addOrder(int orderId); // return OrderId if order was added successfully, -1 otherwise
-    string toString(WareHouse &wareHouse);
+    int addOrder(int orderId);           // return OrderId if order was added successfully, -1 otherwise
     virtual Customer *clone() const = 0; // Return a copy of the customer
 
 private:

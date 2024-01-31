@@ -49,35 +49,6 @@ int Customer::addOrder(int orderId)
     return -1;
 }
 
-string Customer::toString(WareHouse &wareHouse)
-{
-    string s = "CustomerID: " + to_string(id) + "\n";
-    for (int id : ordersId)
-    {
-        OrderStatus stautus(wareHouse.getOrder(id).getStatus());
-        s += "OrderID: " + to_string(id) + "\n" + "OrderStatus: ";
-        switch (stautus)
-        {
-        case OrderStatus::PENDING:
-            s += "PENDING";
-            break;
-        case OrderStatus::COLLECTING:
-            s += "COLLECTING";
-            break;
-        case OrderStatus::DELIVERING:
-            s += "DELIVERING";
-            break;
-        case OrderStatus::COMPLETED:
-            s += "COMPLETED";
-            break;
-        }
-        s += "\n";
-    }
-    s += "numOrdersLeft: " + maxOrders - ordersId.size();
-
-    return s;
-}
-
 SoldierCustomer::SoldierCustomer(int id, const string &name, int locationDistance, int maxOrders) : Customer(id,
                                                                                                              name, locationDistance, maxOrders)
 {

@@ -10,6 +10,7 @@ void Parse::ParseFile(const string &configorationFile, WareHouse &wareHouse)
 {
     ifstream myFile(configorationFile);
     string myline;
+
     while (getline(myFile, myline))
     {
         if (myline.rfind("customer", 0) == 0)
@@ -40,6 +41,7 @@ void Parse::ParseFile(const string &configorationFile, WareHouse &wareHouse)
             {
                 volunteer = new LimitedDriverVolunteer(wareHouse.assignVolunteerId(), words[1], stoi(words[3]), stoi(words[4]), stoi(words[5]));
             }
+            wareHouse.addVolunteer(volunteer);
         }
         myFile >> ws;
         if (!myFile)

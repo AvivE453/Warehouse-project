@@ -25,6 +25,7 @@ public:
     virtual string toString() const = 0;
     virtual Volunteer *clone() const = 0; // Return a copy of the volunteer
     virtual bool hasFininshed() = 0;
+    void setActiveOrderId(int orderId);
 
 protected:
     int completedOrderId; // Initialized to NO_ORDER if no order has been completed yet
