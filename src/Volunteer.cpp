@@ -3,7 +3,7 @@
 #include "../include/Volunteer.h"
 #include "../include/Order.h"
 
-Volunteer::Volunteer(int id, const string &name) : id(id), name(name), activeOrderId(NO_ORDER), completedOrderId(NO_ORDER)
+Volunteer::Volunteer(int id, const string &name) : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER)
 {
 }
 

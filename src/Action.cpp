@@ -6,7 +6,7 @@
 using namespace std;
 extern WareHouse *backup;
 
-BaseAction::BaseAction()
+BaseAction::BaseAction() : errorMsg("")
 {
 }
 
@@ -375,10 +375,12 @@ void Close::act(WareHouse &wareHouse)
 }
 Close *Close::clone() const
 {
+  return new Close(*this);
 }
-string Close::toString() const {
-
-};
+string Close::toString() const
+{
+  return "Close Completed";
+}
 BackupWareHouse::BackupWareHouse()
 {
 }
