@@ -36,10 +36,6 @@ AddCustomer::AddCustomer(const string &customerName, const string &customerType,
 {
 }
 
-AddCustomer::AddCustomer(const AddCustomer &other) : customerName(other.customerName), customerType(other.customerType), distance(other.distance), maxOrders(other.maxOrders)
-{
-}
-
 void AddCustomer::act(WareHouse &wareHouse)
 {
   Customer *customer;
@@ -77,10 +73,6 @@ CustomerType AddCustomer::convertCustomerType(const string &customerType) const
   return CustomerType::Civilian;
 }
 PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId)
-{
-}
-
-PrintCustomerStatus::PrintCustomerStatus(const PrintCustomerStatus &other) : customerId(other.customerId)
 {
 }
 
@@ -129,9 +121,6 @@ string PrintCustomerStatus::toString() const
   return "customerStatus " + to_string(customerId) + " " + statusType;
 }
 AddOrder::AddOrder(int id) : customerId(id)
-{
-}
-AddOrder::AddOrder(const AddOrder &other) : customerId(other.customerId)
 {
 }
 
@@ -231,7 +220,10 @@ std::string SimulateStep::toString() const
     statusType = "COMPLETED";
   return "simulateStep " + to_string(numOfSteps) + " " + statusType;
 }
-SimulateStep *SimulateStep::clone() const {}
+SimulateStep *SimulateStep::clone() const
+{
+  return new SimulateStep(*this);
+}
 
 PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {}
 void PrintOrderStatus::act(WareHouse &wareHouse)
@@ -269,7 +261,10 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
     error("Order doesn't exist");
   }
 }
-PrintOrderStatus *PrintOrderStatus::clone() const {};
+PrintOrderStatus *PrintOrderStatus::clone() const
+{
+  return new PrintOrderStatus(*this);
+}
 string PrintOrderStatus::toString() const
 {
   string statusType = "ERROR";
@@ -329,6 +324,7 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse)
 }
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const
 {
+  return new PrintVolunteerStatus(*this);
 }
 string PrintVolunteerStatus::toString() const
 {
@@ -350,6 +346,7 @@ void PrintActionsLog::act(WareHouse &wareHouse)
 }
 PrintActionsLog *PrintActionsLog::clone() const
 {
+  return new PrintActionsLog(*this);
 }
 string PrintActionsLog::toString() const
 {
@@ -391,6 +388,7 @@ void BackupWareHouse::act(WareHouse &wareHouse)
 }
 BackupWareHouse *BackupWareHouse::clone() const
 {
+  return new BackupWareHouse(*this);
 }
 string BackupWareHouse::toString() const
 {

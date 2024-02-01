@@ -9,7 +9,6 @@ class Customer
 public:
     Customer(int id, const string &name, int locationDistance, int maxOrders);
     const string &getName() const;
-    Customer(const Customer &other);
     int getId() const;
     int getCustomerDistance() const;
     int getMaxOrders() const;  // Returns maxOrders

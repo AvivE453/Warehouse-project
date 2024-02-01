@@ -16,8 +16,10 @@ class WareHouse
 public:
     WareHouse(const string &configFilePath);
     WareHouse(const WareHouse &other);
+    WareHouse(WareHouse &&other);
     WareHouse *clone() const;
     void operator=(const WareHouse &other);
+    void operator=(WareHouse &&other);
     void start();
     void addOrder(Order *order);
     void addCustomer(Customer *costumer);

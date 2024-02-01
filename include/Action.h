@@ -53,7 +53,6 @@ class AddOrder : public BaseAction
 {
 public:
     AddOrder(int id);
-    AddOrder(const AddOrder &other);
     void act(WareHouse &wareHouse) override;
     string toString() const override;
     AddOrder *clone() const override;
@@ -66,7 +65,6 @@ class AddCustomer : public BaseAction
 {
 public:
     AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders);
-    AddCustomer(const AddCustomer &other);
     void act(WareHouse &wareHouse) override;
     AddCustomer *clone() const override;
     string toString() const override;
@@ -83,7 +81,7 @@ class PrintOrderStatus : public BaseAction
 {
 public:
     PrintOrderStatus(int id);
-    PrintOrderStatus(const PrintOrderStatus &other);
+    // PrintOrderStatus(const PrintOrderStatus &other);
     void act(WareHouse &wareHouse) override;
     PrintOrderStatus *clone() const override;
     string toString() const override;
@@ -95,7 +93,6 @@ private:
 class PrintCustomerStatus : public BaseAction
 {
 public:
-    PrintCustomerStatus(const PrintCustomerStatus &other);
     PrintCustomerStatus(int customerId);
     void act(WareHouse &wareHouse) override;
     PrintCustomerStatus *clone() const override;

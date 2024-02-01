@@ -7,10 +7,6 @@ Customer::Customer(int id, const string &name, int locationDistance, int maxOrde
 {
 }
 
-Customer::Customer(const Customer &other) : id(other.id), name(other.name), locationDistance(other.locationDistance), maxOrders(other.maxOrders)
-{
-}
-
 const string &Customer::getName() const
 {
     return name;
