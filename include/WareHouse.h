@@ -18,8 +18,8 @@ public:
     WareHouse(const WareHouse &other);
     WareHouse(WareHouse &&other);
     WareHouse *clone() const;
-    void operator=(const WareHouse &other);
-    void operator=(WareHouse &&other);
+    WareHouse& operator=(const WareHouse &other);
+    WareHouse& operator=(WareHouse &&other);
     void start();
     void addOrder(Order *order);
     void addCustomer(Customer *costumer);
@@ -59,6 +59,7 @@ private:
     vector<Order *> inProcessOrders;
     vector<Order *> completedOrders;
     vector<Customer *> customers;
+    vector<Volunteer *> deletedVolunteers;
     int customerCounter;  // For assigning unique customer IDs
     int volunteerCounter; // For assigning unique volunteer IDs
     int orderCounter;     // For assigning unique order IDs

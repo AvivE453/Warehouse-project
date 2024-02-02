@@ -200,7 +200,7 @@ void SimulateStep::act(WareHouse &wareHouse)
           }
           voulnteers[i]->setActiveOrderId(NO_ORDER);
           wareHouse.removeInProcessOrderFromList(order);
-          if (typeid(voulnteers[i]) == typeid(LimitedCollectorVolunteer) || typeid(voulnteers[i]) == typeid(LimitedDriverVolunteer))
+          if (typeid(*voulnteers[i]) == typeid(LimitedCollectorVolunteer) || typeid(*voulnteers[i]) == typeid(LimitedDriverVolunteer))
           {
             if (!voulnteers[i]->hasOrdersLeft())
             {
@@ -278,9 +278,9 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 }
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
-  if (volunteerId >= 0 && volunteerId < wareHouse.getVolunteerCounter())
-  {
     Volunteer *volunteer(&wareHouse.getVolunteer(volunteerId));
+  if (volunteerId >= 0 && volunteerId < wareHouse.getVolunteerCounter() && volunteer->getId() != -2)
+  {
     cout << "VolunteerId: " << volunteerId << endl;
     string isBusy = "False";
     string orderID = "None";
