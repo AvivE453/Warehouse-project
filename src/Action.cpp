@@ -6,7 +6,7 @@
 using namespace std;
 extern WareHouse *backup;
 
-BaseAction::BaseAction() : errorMsg("")
+BaseAction::BaseAction() : errorMsg(""), status(ActionStatus::COMPLETED)
 {
 }
 
@@ -85,10 +85,13 @@ void PrintCustomerStatus::act(WareHouse &wareHouse)
     for (int id : customer->getOrdersIds())
     {
       OrderStatus stautus(wareHouse.getOrder(id).getStatus());
-      string status2 = "COMPLETED";
+      string status2 = "";
       cout << "OrderID: " << to_string(id) << endl;
       switch (stautus)
       {
+      case OrderStatus::COMPLETED:
+        status2 = "COMPLETED";
+        break;
       case OrderStatus::PENDING:
         status2 = "PENDING";
         break;
@@ -159,7 +162,7 @@ void SimulateStep::act(WareHouse &wareHouse)
     for (Order *order : wareHouse.getPendingOrders())
     {
 
-      for (int i = 0; i < voulnteers.size(); i++)
+      for (size_t i = 0; i < voulnteers.size(); i++)
       {
         if (voulnteers[i]->canTakeOrder(*order))
         {
@@ -181,7 +184,7 @@ void SimulateStep::act(WareHouse &wareHouse)
       }
     }
 
-    for (int i = 0; i < voulnteers.size(); i++)
+    for (size_t i = 0; i < voulnteers.size(); i++)
     {
       if (voulnteers[i]->isBusy())
       {
@@ -278,9 +281,9 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 }
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
-    Volunteer *volunteer(&wareHouse.getVolunteer(volunteerId));
-  if (volunteerId >= 0 && volunteerId < wareHouse.getVolunteerCounter() && volunteer->getId() != -2)
+  if (!wareHouse.isDeletedVolunteer(volunteerId) && volunteerId >= 0 && volunteerId < wareHouse.getVolunteerCounter())
   {
+    Volunteer *volunteer(&wareHouse.getVolunteer(volunteerId));
     cout << "VolunteerId: " << volunteerId << endl;
     string isBusy = "False";
     string orderID = "None";
@@ -339,7 +342,7 @@ PrintActionsLog::PrintActionsLog()
 void PrintActionsLog::act(WareHouse &wareHouse)
 {
   vector<BaseAction *> actionsLog = wareHouse.getActionsLog();
-  for (int i = 0; i < actionsLog.size(); i++)
+  for (size_t i = 0; i < actionsLog.size(); i++)
   {
     cout << actionsLog[i]->toString() << endl;
   }
@@ -358,17 +361,17 @@ Close::Close()
 void Close::act(WareHouse &wareHouse)
 {
   vector<Order *> orders = wareHouse.getPendingOrders();
-  for (int i = 0; i < orders.size(); i++)
+  for (size_t i = 0; i < orders.size(); i++)
   {
     cout << orders[i]->toString() << endl;
   }
   orders = wareHouse.getCompletedOrders();
-  for (int i = 0; i < orders.size(); i++)
+  for (size_t i = 0; i < orders.size(); i++)
   {
     cout << orders[i]->toString() << endl;
   }
   orders = wareHouse.getInProcessOrders();
-  for (int i = 0; i < orders.size(); i++)
+  for (size_t i = 0; i < orders.size(); i++)
   {
     cout << orders[i]->toString() << endl;
   }
@@ -413,6 +416,7 @@ void RestoreWareHouse::act(WareHouse &wareHouse)
 }
 RestoreWareHouse *RestoreWareHouse::clone() const
 {
+  return new RestoreWareHouse(*this);
 }
 string RestoreWareHouse::toString() const
 {

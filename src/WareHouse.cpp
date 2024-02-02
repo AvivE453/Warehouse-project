@@ -7,10 +7,9 @@
 
 using namespace std;
 
-
-WareHouse::WareHouse(const string &configFilePath) : isOpen(true), customerCounter(0), volunteerCounter(0), orderCounter(0)
+WareHouse::WareHouse(const string &configFilePath) : isOpen(true), parse(), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), deletedVolunteers(), customerCounter(0), volunteerCounter(0), orderCounter(0)
 {
-    parse.ParseFile(configFilePath, *this);    
+    parse.ParseFile(configFilePath, *this);
 }
 void WareHouse::addCustomer(Customer *customer)
 {
@@ -153,75 +152,76 @@ const vector<BaseAction *> &WareHouse::getActionsLog() const
 {
     return actionsLog;
 }
-WareHouse::WareHouse(const WareHouse &other) : isOpen(other.isOpen), parse(other.parse),
-                                               customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter),
+WareHouse::WareHouse(const WareHouse &other) : isOpen(other.isOpen), parse(other.parse), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), deletedVolunteers(), customerCounter(other.customerCounter),
+                                               volunteerCounter(other.volunteerCounter),
                                                orderCounter(other.orderCounter)
 {
-    for (int i = 0; i < other.actionsLog.size(); i++)
+    for (size_t i = 0; i < other.actionsLog.size(); i++)
     {
         actionsLog.push_back(other.actionsLog.at(i)->clone());
     }
-    for (int i = 0; i < other.volunteers.size(); i++)
+    for (size_t i = 0; i < other.volunteers.size(); i++)
     {
         volunteers.push_back(other.volunteers.at(i)->clone());
     }
-    for (int i = 0; i < other.deletedVolunteers.size(); i++)
+    for (size_t i = 0; i < other.deletedVolunteers.size(); i++)
     {
         deletedVolunteers.push_back(other.deletedVolunteers.at(i)->clone());
     }
-    for (int i = 0; i < other.pendingOrders.size(); i++)
+    for (size_t i = 0; i < other.pendingOrders.size(); i++)
     {
         pendingOrders.push_back(other.pendingOrders.at(i)->clone());
     }
-    for (int i = 0; i < other.inProcessOrders.size(); i++)
+    for (size_t i = 0; i < other.inProcessOrders.size(); i++)
     {
         inProcessOrders.push_back(other.inProcessOrders.at(i)->clone());
     }
-    for (int i = 0; i < other.completedOrders.size(); i++)
+    for (size_t i = 0; i < other.completedOrders.size(); i++)
     {
         completedOrders.push_back(other.completedOrders.at(i)->clone());
     }
-    for (int i = 0; i < other.customers.size(); i++)
+    for (size_t i = 0; i < other.customers.size(); i++)
     {
         customers.push_back(other.customers.at(i)->clone());
     }
 }
 
-WareHouse::WareHouse(WareHouse &&other) : isOpen(other.isOpen), parse(other.parse),
-                                          customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter),
+WareHouse::WareHouse(WareHouse &&other) : isOpen(other.isOpen), parse(other.parse), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), deletedVolunteers(),
+                                          customerCounter(other.customerCounter),
+                                          volunteerCounter(other.volunteerCounter),
                                           orderCounter(other.orderCounter)
 {
-    for (int i = 0; i < other.actionsLog.size(); i++)
+    for (size_t i = 0; i < other.actionsLog.size(); i++)
     {
         actionsLog.push_back(other.actionsLog.at(i));
         other.actionsLog.at(i) = nullptr;
     }
-    for (int i = 0; i < other.volunteers.size(); i++)
+    for (size_t i = 0; i < other.volunteers.size(); i++)
     {
         volunteers.push_back(other.volunteers.at(i)->clone());
         other.volunteers.at(i) = nullptr;
     }
-       for (int i = 0; i < other.deletedVolunteers.size(); i++)
+    for (size_t i = 0; i < other.deletedVolunteers.size(); i++)
     {
         deletedVolunteers.push_back(other.deletedVolunteers.at(i)->clone());
         other.deletedVolunteers.at(i) = nullptr;
     }
-    for (int i = 0; i < other.pendingOrders.size(); i++)
+    for (size_t i = 0; i < other.pendingOrders.size(); i++)
     {
         pendingOrders.push_back(other.pendingOrders.at(i)->clone());
         other.pendingOrders.at(i) = nullptr;
     }
-    for (int i = 0; i < other.inProcessOrders.size(); i++)
+    for (size_t i = 0; i < other.inProcessOrders.size(); i++)
     {
         inProcessOrders.push_back(other.inProcessOrders.at(i)->clone());
         other.inProcessOrders.at(i) = nullptr;
     }
-    for (int i = 0; i < other.completedOrders.size(); i++)
+    for (size_t i = 0; i < other.completedOrders.size(); i++)
     {
         completedOrders.push_back(other.completedOrders.at(i)->clone());
         other.completedOrders.at(i) = nullptr;
     }
-    for (int i = 0; i < other.customers.size(); i++)
+    for (size_t i = 0; i < other.customers.size(); i++)
     {
         customers.push_back(other.customers.at(i)->clone());
         other.customers.at(i) = nullptr;
@@ -232,7 +232,7 @@ WareHouse *WareHouse::clone() const
 {
     return new WareHouse(*this);
 }
-WareHouse& WareHouse::operator=(const WareHouse &other)
+WareHouse &WareHouse::operator=(const WareHouse &other)
 {
     if (&other != this)
     {
@@ -241,66 +241,66 @@ WareHouse& WareHouse::operator=(const WareHouse &other)
         customerCounter = other.customerCounter;
         volunteerCounter = other.volunteerCounter;
         orderCounter = other.orderCounter;
-        for (int i = 0; i < actionsLog.size(); i++)
+        for (size_t i = 0; i < actionsLog.size(); i++)
         {
             delete actionsLog.at(i);
         }
         actionsLog.clear();
-        for (int i = 0; i < other.actionsLog.size(); i++)
+        for (size_t i = 0; i < other.actionsLog.size(); i++)
         {
             actionsLog.push_back(other.actionsLog.at(i)->clone());
         }
-        for (int i = 0; i < pendingOrders.size(); i++)
+        for (size_t i = 0; i < pendingOrders.size(); i++)
         {
             delete pendingOrders.at(i);
         }
         pendingOrders.clear();
-        for (int i = 0; i < other.pendingOrders.size(); i++)
+        for (size_t i = 0; i < other.pendingOrders.size(); i++)
         {
             pendingOrders.push_back(other.pendingOrders.at(i)->clone());
         }
-        for (int i = 0; i < inProcessOrders.size(); i++)
+        for (size_t i = 0; i < inProcessOrders.size(); i++)
         {
             delete inProcessOrders.at(i);
         }
         inProcessOrders.clear();
-        for (int i = 0; i < other.inProcessOrders.size(); i++)
+        for (size_t i = 0; i < other.inProcessOrders.size(); i++)
         {
             inProcessOrders.push_back(other.inProcessOrders.at(i)->clone());
         }
-        for (int i = 0; i < completedOrders.size(); i++)
+        for (size_t i = 0; i < completedOrders.size(); i++)
         {
             delete completedOrders.at(i);
         }
         completedOrders.clear();
-        for (int i = 0; i < other.completedOrders.size(); i++)
+        for (size_t i = 0; i < other.completedOrders.size(); i++)
         {
             completedOrders.push_back(other.completedOrders.at(i)->clone());
         }
-        for (int i = 0; i < customers.size(); i++)
+        for (size_t i = 0; i < customers.size(); i++)
         {
             delete customers.at(i);
         }
         customers.clear();
-        for (int i = 0; i < other.customers.size(); i++)
+        for (size_t i = 0; i < other.customers.size(); i++)
         {
             customers.push_back(other.customers.at(i)->clone());
         }
-        for (int i = 0; i < volunteers.size(); i++)
+        for (size_t i = 0; i < volunteers.size(); i++)
         {
             delete volunteers.at(i);
         }
         volunteers.clear();
-        for (int i = 0; i < other.volunteers.size(); i++)
+        for (size_t i = 0; i < other.volunteers.size(); i++)
         {
             volunteers.push_back(other.volunteers.at(i)->clone());
         }
-        for (int i = 0; i < deletedVolunteers.size(); i++)
+        for (size_t i = 0; i < deletedVolunteers.size(); i++)
         {
             delete deletedVolunteers.at(i);
         }
         deletedVolunteers.clear();
-        for (int i = 0; i < other.deletedVolunteers.size(); i++)
+        for (size_t i = 0; i < other.deletedVolunteers.size(); i++)
         {
             deletedVolunteers.push_back(other.deletedVolunteers.at(i)->clone());
         }
@@ -308,7 +308,7 @@ WareHouse& WareHouse::operator=(const WareHouse &other)
     return *this;
 }
 
-WareHouse& WareHouse::operator=(WareHouse &&other)
+WareHouse &WareHouse::operator=(WareHouse &&other)
 {
     if (&other != this)
     {
@@ -317,72 +317,72 @@ WareHouse& WareHouse::operator=(WareHouse &&other)
         customerCounter = other.customerCounter;
         volunteerCounter = other.volunteerCounter;
         orderCounter = other.orderCounter;
-        for (int i = 0; i < actionsLog.size(); i++)
+        for (size_t i = 0; i < actionsLog.size(); i++)
         {
             delete actionsLog.at(i);
         }
         actionsLog.clear();
-        for (int i = 0; i < other.actionsLog.size(); i++)
+        for (size_t i = 0; i < other.actionsLog.size(); i++)
         {
             actionsLog.push_back(other.actionsLog.at(i));
             other.actionsLog.at(i) = nullptr;
         }
-        for (int i = 0; i < pendingOrders.size(); i++)
+        for (size_t i = 0; i < pendingOrders.size(); i++)
         {
             delete pendingOrders.at(i);
         }
         pendingOrders.clear();
-        for (int i = 0; i < other.pendingOrders.size(); i++)
+        for (size_t i = 0; i < other.pendingOrders.size(); i++)
         {
             pendingOrders.push_back(other.pendingOrders.at(i));
             other.pendingOrders.at(i) = nullptr;
         }
-        for (int i = 0; i < inProcessOrders.size(); i++)
+        for (size_t i = 0; i < inProcessOrders.size(); i++)
         {
             delete inProcessOrders.at(i);
         }
         inProcessOrders.clear();
-        for (int i = 0; i < other.inProcessOrders.size(); i++)
+        for (size_t i = 0; i < other.inProcessOrders.size(); i++)
         {
             inProcessOrders.push_back(other.inProcessOrders.at(i));
             inProcessOrders.at(i) = nullptr;
         }
-        for (int i = 0; i < completedOrders.size(); i++)
+        for (size_t i = 0; i < completedOrders.size(); i++)
         {
             delete completedOrders.at(i);
         }
         completedOrders.clear();
-        for (int i = 0; i < other.completedOrders.size(); i++)
+        for (size_t i = 0; i < other.completedOrders.size(); i++)
         {
             completedOrders.push_back(other.completedOrders.at(i));
             other.completedOrders.at(i) = nullptr;
         }
-        for (int i = 0; i < customers.size(); i++)
+        for (size_t i = 0; i < customers.size(); i++)
         {
             delete customers.at(i);
         }
         customers.clear();
-        for (int i = 0; i < other.customers.size(); i++)
+        for (size_t i = 0; i < other.customers.size(); i++)
         {
             customers.push_back(other.customers.at(i));
             other.customers.at(i) = nullptr;
         }
-        for (int i = 0; i < volunteers.size(); i++)
+        for (size_t i = 0; i < volunteers.size(); i++)
         {
             delete volunteers.at(i);
         }
         volunteers.clear();
-        for (int i = 0; i < other.volunteers.size(); i++)
+        for (size_t i = 0; i < other.volunteers.size(); i++)
         {
             volunteers.push_back(other.volunteers.at(i));
             other.volunteers.at(i) = nullptr;
         }
-        for (int i = 0; i < deletedVolunteers.size(); i++)
+        for (size_t i = 0; i < deletedVolunteers.size(); i++)
         {
             delete deletedVolunteers.at(i);
         }
         deletedVolunteers.clear();
-        for (int i = 0; i < other.deletedVolunteers.size(); i++)
+        for (size_t i = 0; i < other.deletedVolunteers.size(); i++)
         {
             deletedVolunteers.push_back(other.deletedVolunteers.at(i));
             other.deletedVolunteers.at(i) = nullptr;
@@ -392,37 +392,41 @@ WareHouse& WareHouse::operator=(WareHouse &&other)
 }
 Customer &WareHouse::getCustomer(int customerId) const
 {
-    for (int i = 0; i < customers.size(); i++)
+    for (size_t i = 0; i < customers.size(); i++)
     {
         if (customers[i]->getId() == customerId)
             return *customers[i];
     }
+    return *customers[0];
 }
 Volunteer &WareHouse::getVolunteer(int volunteerId) const
 {
-    for (int i = 0; i < volunteers.size(); i++)
+    for (size_t i = 0; i < volunteers.size(); i++)
     {
-        if (volunteers[i]->getId() == volunteerId) 
-            return *volunteers[i];        
+        if (volunteers[i]->getId() == volunteerId)
+            return *volunteers[i];
     }
+
+    return *volunteers[0];
 }
 Order &WareHouse::getOrder(int orderId) const
 {
-    for (int i = 0; i < pendingOrders.size(); i++)
+    for (size_t i = 0; i < pendingOrders.size(); i++)
     {
         if (pendingOrders[i]->getId() == orderId)
             return *pendingOrders[i];
     }
-    for (int i = 0; i < inProcessOrders.size(); i++)
+    for (size_t i = 0; i < inProcessOrders.size(); i++)
     {
         if (inProcessOrders[i]->getId() == orderId)
             return *inProcessOrders[i];
     }
-    for (int i = 0; i < completedOrders.size(); i++)
+    for (size_t i = 0; i < completedOrders.size(); i++)
     {
         if (completedOrders[i]->getId() == orderId)
             return *completedOrders[i];
     }
+    return *pendingOrders[0];
 }
 const vector<BaseAction *> &WareHouse::getActions() const
 {
@@ -439,7 +443,7 @@ void WareHouse::open()
 
 void WareHouse::removePendingOrderFromList(Order *order)
 {
-    for (int i = 0; i < pendingOrders.size(); i++)
+    for (size_t i = 0; i < pendingOrders.size(); i++)
     {
         if (order == pendingOrders[i])
             pendingOrders.erase(pendingOrders.begin() + i);
@@ -447,7 +451,7 @@ void WareHouse::removePendingOrderFromList(Order *order)
 }
 void WareHouse::removeInProcessOrderFromList(Order *order)
 {
-    for (int i = 0; i < inProcessOrders.size(); i++)
+    for (size_t i = 0; i < inProcessOrders.size(); i++)
     {
         if (order == inProcessOrders[i])
             inProcessOrders.erase(inProcessOrders.begin() + i);
@@ -455,49 +459,49 @@ void WareHouse::removeInProcessOrderFromList(Order *order)
 }
 void WareHouse::removeVolunteerFromList(Volunteer *volunteer)
 {
-    for (int i = 0; i < volunteers.size(); i++)
+    for (size_t i = 0; i < volunteers.size(); i++)
     {
         if (volunteer == volunteers[i])
         {
-            volunteers.erase(volunteers.begin() + i);
             deletedVolunteers.push_back(volunteers[i]);
+            volunteers.erase(volunteers.begin() + i);
         }
     }
 }
 
 WareHouse::~WareHouse()
 {
-    for (int i = 0; i < actionsLog.size(); i++)
+    for (size_t i = 0; i < actionsLog.size(); i++)
     {
         delete actionsLog.at(i);
     }
     actionsLog.clear();
-    for (int i = 0; i < volunteers.size(); i++)
+    for (size_t i = 0; i < volunteers.size(); i++)
     {
         delete volunteers.at(i);
     }
     volunteers.clear();
-        for (int i = 0; i < deletedVolunteers.size(); i++)
+    for (size_t i = 0; i < deletedVolunteers.size(); i++)
     {
         delete deletedVolunteers.at(i);
     }
     deletedVolunteers.clear();
-    for (int i = 0; i < pendingOrders.size(); i++)
+    for (size_t i = 0; i < pendingOrders.size(); i++)
     {
         delete pendingOrders.at(i);
     }
     pendingOrders.clear();
-    for (int i = 0; i < inProcessOrders.size(); i++)
+    for (size_t i = 0; i < inProcessOrders.size(); i++)
     {
         delete inProcessOrders.at(i);
     }
     inProcessOrders.clear();
-    for (int i = 0; i < completedOrders.size(); i++)
+    for (size_t i = 0; i < completedOrders.size(); i++)
     {
         delete completedOrders.at(i);
     }
     completedOrders.clear();
-    for (int i = 0; i < customers.size(); i++)
+    for (size_t i = 0; i < customers.size(); i++)
     {
         delete customers.at(i);
     }
@@ -514,4 +518,14 @@ const vector<Order *> &WareHouse::getInProcessOrders() const
 const vector<Order *> &WareHouse::getCompletedOrders() const
 {
     return completedOrders;
+}
+
+bool WareHouse ::isDeletedVolunteer(int volunteerId) const
+{
+    for (size_t i = 0; i < deletedVolunteers.size(); i++)
+    {
+        if (deletedVolunteers[i]->getId() == volunteerId)
+            return true;
+    }
+    return false;
 }

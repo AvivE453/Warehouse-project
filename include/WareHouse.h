@@ -18,8 +18,8 @@ public:
     WareHouse(const WareHouse &other);
     WareHouse(WareHouse &&other);
     WareHouse *clone() const;
-    WareHouse& operator=(const WareHouse &other);
-    WareHouse& operator=(WareHouse &&other);
+    WareHouse &operator=(const WareHouse &other);
+    WareHouse &operator=(WareHouse &&other);
     void start();
     void addOrder(Order *order);
     void addCustomer(Customer *costumer);
@@ -27,6 +27,7 @@ public:
     void addVolunteer(Volunteer *volunteer);
     Customer &getCustomer(int customerId) const;
     Volunteer &getVolunteer(int volunteerId) const;
+    bool isDeletedVolunteer(int volunteerId) const;
     Order &getOrder(int orderId) const;
     const vector<BaseAction *> &getActions() const;
     void close();
