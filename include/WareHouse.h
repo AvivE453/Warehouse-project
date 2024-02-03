@@ -27,7 +27,6 @@ public:
     void addVolunteer(Volunteer *volunteer);
     Customer &getCustomer(int customerId) const;
     Volunteer &getVolunteer(int volunteerId) const;
-    bool isDeletedVolunteer(int volunteerId) const;
     Order &getOrder(int orderId) const;
     const vector<BaseAction *> &getActions() const;
     void close();
@@ -60,8 +59,10 @@ private:
     vector<Order *> inProcessOrders;
     vector<Order *> completedOrders;
     vector<Customer *> customers;
-    vector<Volunteer *> deletedVolunteers;
     int customerCounter;  // For assigning unique customer IDs
     int volunteerCounter; // For assigning unique volunteer IDs
     int orderCounter;     // For assigning unique order IDs
+    Volunteer *notFoundVolunteer;
+    Customer *notFoundCustomer;
+    Order *notFoundOrder;
 };

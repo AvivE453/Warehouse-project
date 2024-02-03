@@ -4,6 +4,7 @@
 #include "../include/Order.h"
 #include "../include/Volunteer.h"
 using namespace std;
+
 extern WareHouse *backup;
 
 BaseAction::BaseAction() : errorMsg(""), status(ActionStatus::COMPLETED)
@@ -159,9 +160,9 @@ void SimulateStep::act(WareHouse &wareHouse)
   for (int step = 1; step <= numOfSteps; step++)
   {
     vector<Volunteer *> voulnteers = wareHouse.getVolunteersList();
-    for (Order *order : wareHouse.getPendingOrders())
+    vector<Order *> orders = wareHouse.getPendingOrders();
+    for (Order *order : orders)
     {
-
       for (size_t i = 0; i < voulnteers.size(); i++)
       {
         if (voulnteers[i]->canTakeOrder(*order))
@@ -281,44 +282,51 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id)
 }
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
-  if (!wareHouse.isDeletedVolunteer(volunteerId) && volunteerId >= 0 && volunteerId < wareHouse.getVolunteerCounter())
+  if (volunteerId >= 0 && volunteerId < wareHouse.getVolunteerCounter())
   {
     Volunteer *volunteer(&wareHouse.getVolunteer(volunteerId));
-    cout << "VolunteerId: " << volunteerId << endl;
-    string isBusy = "False";
-    string orderID = "None";
-    if (volunteer->isBusy())
+    if (volunteer->getId() != -1)
     {
-      isBusy = "True";
-      orderID = to_string(volunteer->getActiveOrderId());
-    }
-    cout << "isBusy: " << isBusy << endl;
+      cout << "VolunteerId: " << volunteerId << endl;
+      string isBusy = "False";
+      string orderID = "None";
+      if (volunteer->isBusy())
+      {
+        isBusy = "True";
+        orderID = to_string(volunteer->getActiveOrderId());
+      }
+      cout << "isBusy: " << isBusy << endl;
 
-    cout << "OrderID: " << orderID << endl;
-    string time = "None";
-    string ordersLimit = "No Limit";
-    if (typeid(*volunteer) == typeid(CollectorVolunteer))
-    {
-      time = to_string(dynamic_cast<CollectorVolunteer *>(volunteer)->getTimeLeft());
-    }
+      cout << "OrderID: " << orderID << endl;
+      string time = "None";
+      string ordersLimit = "No Limit";
+      if (typeid(*volunteer) == typeid(CollectorVolunteer))
+      {
+        time = to_string(dynamic_cast<CollectorVolunteer *>(volunteer)->getTimeLeft());
+      }
 
-    else if (typeid(*volunteer) == typeid(LimitedCollectorVolunteer))
-    {
-      time = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getTimeLeft());
-      ordersLimit = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getNumOrdersLeft());
+      else if (typeid(*volunteer) == typeid(LimitedCollectorVolunteer))
+      {
+        time = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getTimeLeft());
+        ordersLimit = to_string(dynamic_cast<LimitedCollectorVolunteer *>(volunteer)->getNumOrdersLeft());
+      }
+      else if (typeid(*volunteer) == typeid(DriverVolunteer))
+      {
+        time = to_string(dynamic_cast<DriverVolunteer *>(volunteer)->getDistanceLeft());
+      }
+      else if (typeid(*volunteer) == typeid(LimitedDriverVolunteer))
+      {
+        time = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getDistanceLeft());
+        ordersLimit = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getNumOrdersLeft());
+      }
+      cout << "TimeLeft: " << time << endl;
+      cout << "OrdersLeft: " << ordersLimit << endl;
+      complete();
     }
-    else if (typeid(*volunteer) == typeid(DriverVolunteer))
+    else
     {
-      time = to_string(dynamic_cast<DriverVolunteer *>(volunteer)->getDistanceLeft());
+      error("Volunteer doesn't exist");
     }
-    else if (typeid(*volunteer) == typeid(LimitedDriverVolunteer))
-    {
-      time = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getDistanceLeft());
-      ordersLimit = to_string(dynamic_cast<LimitedDriverVolunteer *>(volunteer)->getNumOrdersLeft());
-    }
-    cout << "TimeLeft: " << time << endl;
-    cout << "OrdersLeft: " << ordersLimit << endl;
-    complete();
   }
   else
   {

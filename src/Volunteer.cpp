@@ -191,7 +191,7 @@ int LimitedDriverVolunteer::getMaxOrders() const
 }
 int LimitedDriverVolunteer::getNumOrdersLeft() const
 {
-    return getNumOrdersLeft();
+    return ordersLeft;
 }
 bool LimitedDriverVolunteer::hasOrdersLeft() const
 {
